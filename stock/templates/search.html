@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<!--
+	Momentum by Pixelarity
+	pixelarity.com | hello@pixelarity.com
+	License: pixelarity.com/license
+-->
+<html>
+	<head>
+		<title>Untitled</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header" class="alt">
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a href="index.html">홈으로</a></li>
+						<li>
+							<a href="#" class="dropdown">기능</a>
+							<ul>
+								<li><a href="elements.html">주가예측하기</a></li>
+								<li><a href="prediction.html">AI가 추천하는 종목 Top5</a></li>
+								<li>
+									<a href="#">Submenu</a>
+									<ul>
+										<li><a href="#">Option One</a></li>
+										<li><a href="#">Option Two</a></li>
+										<li><a href="#">Option Three</a></li>
+										<li><a href="#">Option Four</a></li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li><a href="generic.html">주요뉴스</a></li>
+						<li><a href="elements.html">주가예측하기</a></li>
+						<li><a href="prediction.html">AI가 추천하는 항목</a></li>
+
+					</ul>
+				</nav>
+
+				<!-- Logo -->
+					<a class="logo" href="index.html">Momentum <span>by Pixelarity</span></a>
+					<h1>검색 결과</h1>
+			</header>
+
+		<!-- Main -->
+			<div id="main">
+				<div class="wrapper">
+					<div class="inner">
+						<!-- <span class="image fit"><img src="images/pic11.jpg" alt="" /></span> -->
+						{% if data %}
+									<ul>
+											{% for item in data %}
+													<li>{{ item }}</li>
+											{% endfor %}
+									</ul>
+							{% else %}
+									<p>검색 결과가 없습니다.</p>
+							{% endif %}
+					</div>
+				</div>
+			</div>
+
+		<!-- Three -->
+			<section id="newsletter">
+				<div class="wrapper style2 special">
+					<div class="inner">
+						<header>
+							<h2>Sapien mauris blandit?</h2>
+							<p>Lorem ipsum dolor mauris, consectetur id ipsum sit amet lorem sed amet consequat.</p>
+						</header>
+						<form method="post" action="#" class="combined">
+							<input type="email" name="email" id="email" placeholder="Your email address" class="invert" />
+							<input type="submit" class="special" value="Subscribe" />
+						</form>
+					</div>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<section id="footer">
+				<div class="wrapper style3">
+					<div class="inner">
+						<div>
+							<header>
+								<h3>Ipsum sed tristique</h3>
+							</header>
+							<p>Nunc et lorem mauris, fringilla in aliquam at, euismod in habitant morbi tristique senectus amet malesuada commodo lorem ipsum dolor amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi massa.</p>
+							<ul class="actions">
+								<li><a href="#" class="button">Learn More</a></li>
+							</ul>
+						</div>
+						<div>
+							<header>
+								<h3>Get in touch</h3>
+							</header>
+							<div class="contact-icons">
+								<ul>
+									<li><a href="#" class="icon solid fa-envelope"><span>information@untitled.tld</span></a></li>
+									<li><a href="#" class="icon brands fa-twitter"><span>@untitled-tld</span></a></li>
+									<li><a href="#" class="icon brands fa-facebook-f"><span>facebook.com/untitled-tld</span></a></li>
+									<li><a href="#" class="icon brands fa-linkedin-in"><span>linkedin.com/untitled-tld</span></a></li>
+								</ul>
+								<ul>
+									<li><a href="#" class="icon solid fa-phone"><span>(000) 000-0000</span></a></li>
+									<li>
+										<div class="icon solid fa-map-marker-alt">
+											<address>
+												Untitled Incorporated<br />
+												1234 Fictional Avenue Suite 5432<br />
+												Nashville, TN 00000-0000<br />
+												United States
+											</address>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="copyright">
+						&copy; Untitled Incorporated, All rights reserved. Lorem ipsum dolor sit amet nullam.
+					</div>
+				</div>
+			</section>
+
+		<!-- Scripts -->
+			<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
+			<script src="{{ url_for('static', filename='assets/js/browser.min.js')}}"></script>
+			<script src="{{ url_for('static', filename='assets/js/jquery.dropotron.min.js')}}"></script>
+			<script src="{{ url_for('static', filename='assets/js/breakpoints.min.js')}}"></script>
+			<script src="{{ url_for('static', filename='assets/js/util.js')}}"></script>
+			<script src="{{ url_for('static', filename='assets/js/main.js')}}"></script>
+			<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+
+	</body>
+</html>
