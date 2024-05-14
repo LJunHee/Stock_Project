@@ -21,7 +21,7 @@ cursor = connection.cursor()
 
 # 테이블 이름 리스트
 table_names = [
-    'f&f_test_result', 'gs_test_result',
+    'bgf리테일_test_result', 'cj제일제당_test_result', 'db손해보험_test_result', 'f&f_test_result', 'gs_test_result',
     'gs리테일_test_result', 'hd한국조선해양_test_result', 'hd현대_test_result', 'hd현대중공업_test_result', 'hmm_test_result',
     'kb금융_test_result', 'kt&g_test_result', 'kt_test_result', 'lg_test_result', 'lg디스플레이_test_result',
     'lg생활건강_test_result', 'lg에너지솔루션_test_result', 'lg유플러스_test_result', 'lg이노텍_test_result', 'lg전자_test_result',
