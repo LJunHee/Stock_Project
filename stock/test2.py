@@ -1,123 +1,99 @@
-import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib import font_manager, rc
-from matplotlib.widgets import RadioButtons
-
-class HoverDisplay:
-    def __init__(self, ax, lines):
-        self.ax = ax
-        self.lines = lines
-        self.annotation_price = ax.annotate('', xy=(0, 0), xytext=(20, 20), textcoords='offset points',
-                                             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-                                             arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
-        self.annotation_price.set_visible(False)
-        self.annotation_date = ax.annotate('', xy=(0, 0), xytext=(-40, -40), textcoords='offset points',
-                                            bbox=dict(boxstyle='round,pad=0.5', fc='lightblue', alpha=0.5),
-                                            arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
-        self.annotation_date.set_visible(False)
-        self.point = ax.plot([], [], 'ko', markersize=5, visible=False)[0]
-    
-    def hover(self, event):
-        if event.inaxes == self.ax:
-            for line in self.lines:
-                contains, ind = line.contains(event)
-                if contains:
-                    x, y = line.get_data()
-                    index = ind['ind'][0]
-                    x_hover = x[index]
-                    y_hover = y[index]
-                    if line.get_label() == '실제 종가':
-                        label_text = '실제 종가'
-                    elif line.get_label() == '예측 종가':
-                        label_text = '예측 종가'
-                    else:
-                        label_text = ''
-                    formatted_date = pd.to_datetime(x_hover).strftime('%Y-%m-%d')
-                    y_hover_int = int(y_hover)
-                    self.annotation_price.xy = (x_hover, y_hover)
-                    self.annotation_price.set_text(f'{label_text}={y_hover_int:,.0f}')
-                    self.annotation_price.set_visible(True)
-                    self.annotation_date.xy = (x_hover, min(self.ax.get_ylim()))
-                    self.annotation_date.set_text(f'날짜={formatted_date}')
-                    self.annotation_date.set_visible(True)
-                    self.point.set_data([x_hover], [y_hover])
-                    self.point.set_visible(True)
-                    plt.draw()
-                    return
-            self.annotation_price.set_visible(False)
-            self.annotation_date.set_visible(False)
-            self.point.set_visible(False)
-            plt.draw()
-        else:
-            self.annotation_price.set_visible(False)
-            self.annotation_date.set_visible(False)
-            self.point.set_visible(False)
-            plt.draw()
+from bokeh.plotting import figure, output_file, save
+from bokeh.models import ColumnDataSource, HoverTool, CustomJS, RadioButtonGroup
+from bokeh.layouts import column
+from bokeh.io import curdoc
+from bokeh.resources import INLINE
+from bokeh.models import NumeralTickFormatter
 
 # CSV 파일에서 데이터 읽어오기
 data = pd.read_csv(r'C:\Users\mintm\Documents\GitHub\Stock_Project\stock\data\A_lstm\BGF리테일_test_result.csv')
 
-# 한글 폰트 설정
-font_path = 'C:/Windows/Fonts/malgun.ttf'  # 한글 폰트 경로
-font_name = font_manager.FontProperties(fname=font_path).get_name()
-rc('font', family=font_name)
-
 # 날짜를 datetime 형식으로 변환
 data['Date'] = pd.to_datetime(data['Date'])
 
+# ColumnDataSource 생성
+source = ColumnDataSource(data=dict(Date=data['Date'], Actual=data['Actual Closing Price'], Forecast=data['Forecast Closing Price']))
+
 # 빈 figure 생성
-fig, ax = plt.subplots(figsize=(20,10))
+p = figure(x_axis_type="datetime", title="실제 종가 vs 예측 종가", height=900, width=1800)
+p.title.align = 'center'  # 제목 가운데 정렬
+p.title.text_font_size = '25pt'  # 제목 글자 크기 조절
+p.yaxis.formatter = NumeralTickFormatter(format='0,0')
 
-# 우측 상단에 라디오 버튼 생성
-rax = plt.axes([0.8, 0.9, 0.1, 0.1], facecolor='lightgoldenrodyellow')
-periods = ['1주', '1개월', '3개월', '전체']
-radio = RadioButtons(rax, periods)
+# 눈금 크기 및 스타일 조절
+p.yaxis.major_label_text_font_size = '15pt'  # 눈금 텍스트 크기 조절
+p.yaxis.major_label_text_font_style = 'bold'  # 눈금 텍스트 굵게 설정
 
-# 처음에는 1주가 선택되어 있지 않도록 설정
-radio.set_active(3)
+# 눈금 크기 및 스타일 조절
+p.xaxis.major_label_text_font_size = '15pt'  # 눈금 텍스트 크기 조절
+p.xaxis.major_label_text_font_style = 'bold'  # 눈금 텍스트 굵게 설정
 
-hover_display = None  # 초기화
+# 실제 종가와 예측 종가 라인 그리기
+line_actual = p.line('Date', 'Actual', source=source, legend_label='실제 종가', line_width=2, color='blue')
+line_forecast = p.line('Date', 'Forecast', source=source, legend_label='예측 종가', line_width=2, color='red')
+p.legend.location = 'top_right'
 
-# 기간 선택 함수
-def select_period(label):
-    ax.clear()
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Closing Price')
-    selected_data = data
-    # 선택된 기간에 따라 데이터 필터링
-    if label == '1주':
-        selected_data = data.iloc[-7:]
-    elif label == '1개월':
-        selected_data = data.iloc[-30:]
-    elif label == '3개월':
-        selected_data = data.iloc[-90:]
+hover_forecast = HoverTool(renderers=[line_forecast], tooltips=[("날짜", "@Date{%F}"), ("실제 종가", "@Actual{0,0}"), ("예측 종가", "@Forecast{0,0}")],
+                           formatters={'@Date': 'datetime'}, mode='vline')
+
+p.add_tools(hover_forecast)
+
+# 라디오 버튼 그룹 생성
+radio_button_group = RadioButtonGroup(labels=["1주", "1개월", "3개월", "전체"], active=3)
+
+callback = CustomJS(args=dict(source=source, original_data=source.data, p=p), code="""
+    var data = source.data;
+    var original_data = original_data;
+    var f = cb_obj.active;
+    var date = original_data['Date'];
+    var actual = original_data['Actual'];
+    var forecast = original_data['Forecast'];
     
-    # 실제 종가 그래프 그리기
-    line_actual, = ax.plot(selected_data['Date'], selected_data['Actual Closing Price'], label='실제 종가')
-
-    # 예측 종가 그래프 그리기
-    line_forecast, = ax.plot(selected_data['Date'], selected_data['Forecast Closing Price'], label='예측 종가')
-
-    global hover_display  # hover_display를 전역 변수로 사용
-
-    # 기존의 hover_display 객체가 있다면 삭제
-    if hover_display:
-        del hover_display
+    // 그래프의 확대/축소, 팬 이동 상태 초기화
+    p.reset.emit();
     
-    hover_display = HoverDisplay(ax, [line_actual, line_forecast])
-    fig.canvas.mpl_connect('motion_notify_event', hover_display.hover)
+    var new_date = [];
+    var new_actual = [];
+    var new_forecast = [];                
     
-    # Add artists to legend
-    ax.legend(handles=[line_actual, line_forecast])
+    if (f == 0) {
+        for (var i = date.length - 7; i < date.length; i++) {
+            new_date.push(date[i]);
+            new_actual.push(actual[i]);
+            new_forecast.push(forecast[i]);
+        }
+    } else if (f == 1) {
+        for (var i = date.length - 30; i < date.length; i++) {
+            new_date.push(date[i]);
+            new_actual.push(actual[i]);
+            new_forecast.push(forecast[i]);
+        }
+    } else if (f == 2) {
+        for (var i = date.length - 90; i < date.length; i++) {
+            new_date.push(date[i]);
+            new_actual.push(actual[i]);
+            new_forecast.push(forecast[i]);
+        }
+    } else {
+        new_date = date;
+        new_actual = actual;
+        new_forecast = forecast;
+    }
     
-    ax.set_title('실제 종가 vs 예측 종가', fontsize=20, fontweight='bold', y=1.05, backgroundcolor='yellow', color='black')
-    
-    fig.canvas.draw()
+    data['Date'] = new_date;
+    data['Actual'] = new_actual;
+    data['Forecast'] = new_forecast;
+    source.change.emit();
+""")
 
-# 라디오 버튼의 상태가 변경되면 select_period 함수를 호출하여 그래프를 업데이트
-radio.on_clicked(select_period)
+radio_button_group.js_on_change('active', callback)
 
-# 처음에는 전체를 선택한 상태로 그래프 그리기
-select_period('전체')
+# 레이아웃 설정
+layout = column(radio_button_group, p)
 
-plt.show()
+# HTML 파일로 저장
+output_file("testindex.html")
+save(layout, resources=INLINE)
+
+print("HTML file saved as testindex.html")
