@@ -12,11 +12,25 @@
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
 		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}" />
+		<style>
+			/* 검색어 자동완성 결과를 표시하는 요소의 스타일 */
+			.ui-autocomplete {
+					position: fixed;
+					z-index: 9999; /* 연관 검색어를 다른 요소 위에 배치하기 위한 z-index 값 */
+					background-color: white;
+					border: 1px solid #ccc;
+					padding-right:30px;
+					max-width: 275px; /* 원하는 너비 값으로 조정 */
+					margin-left : 50%;
+					list-style-type: none;
+			}
+
+	</style>
 	</head>
 	<body class="is-preload">
 
 		<!-- Header -->
-			<header id="header">
+			<header id="header" style="z-index: 9990;">
 
 				<!-- Nav -->
 					<nav id="nav">
@@ -59,7 +73,7 @@
 							</ul>
 						</div>
 					</article>
-					<article class="half">
+					<article class="full">
 						<div class="image" data-position="center">
 							<img src="{{ url_for('static', filename='images/pic02.jpg')}}" alt="" />
 						</div>
@@ -70,7 +84,7 @@
 							</ul>
 						</div>
 					</article>
-					<article class="half">
+					<article class="full">
 						<div class="image" data-position="center">
 							<img src="{{ url_for('static', filename='images/pic03.jpg')}}" alt="" />
 						</div>
