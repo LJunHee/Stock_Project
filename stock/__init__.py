@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+from bs4 import BeautifulSoup
+# import pandas as pd
+import requests
+import re
 import mysql.connector
-import test
 
 app = Flask(__name__)
 
@@ -58,6 +61,60 @@ def search_query(query):
         # 검색 결과가 없으면 None 반환
         return None
 
+@app.route('/get_news', methods=['POST'])
+def get_news():
+    data = request.json
+    company = data['company']
+    maxpage = data['maxpage']
+
+    company_code = convert_to_code(company)
+    if not company_code:
+        return jsonify({"error": "Company not found"}), 404
+
+    news = crawler(company_code, maxpage)
+    return jsonify(news)
+
+def convert_to_code(company):
+    data = pd.read_csv('company_list.txt', dtype=str, sep='\t')
+    company_dict = dict(zip(data['회사명'], data['종목코드']))
+
+    pattern = '[a-zA-Z가-힣]+'
+    if re.match(pattern, company):
+        return company_dict.get(company)
+    else:
+        return company
+
+def crawler(company_code, maxpage):
+    page = 1
+    news_list = []
+
+    while page <= int(maxpage):
+        url = f'https://finance.naver.com/item/news_news.nhn?code={company_code}&page={page}'
+        source_code = requests.get(url).text
+        html = BeautifulSoup(source_code, "lxml")
+
+        titles = html.select('.title')
+        dates = html.select('.date')
+        sources = html.select('.info')
+
+        for i in range(len(titles)):
+            title = titles[i].get_text().strip()
+            link = 'https://finance.naver.com' + titles[i].find('a')['href']
+            date = dates[i].get_text().strip()
+            source = sources[i].get_text().strip()
+
+            news_list.append({
+                "title": title,
+                "link": link,
+                "date": date,
+                "source": source
+            })
+
+        page += 1
+
+    return news_list
+
+
 #자동 완성 검색 쿼리 함수 정의
 def search_query_name(query):
     cursor = db.cursor()
@@ -106,10 +163,12 @@ def elements_html():
 def prediction_html():
     return render_template('prediction.html')
 
-@app.route('/showGraph')
-def show_graph():
-    test.show_graph2()
-    return redirect(url_for('search'))
+@app.route('/news.html')
+def news_html():
+    return render_template('news.html')
+
+
+
 
 
 if __name__ == "__main__":

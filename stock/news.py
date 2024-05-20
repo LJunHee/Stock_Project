@@ -1,6 +1,3 @@
-""" 주식종목 뉴스(네이버 파이넌스) Crawling 하기 """
-
-
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -15,14 +12,13 @@ os.chdir('C:/Apache24/flask/app/stock')
 def crawler(company_code, maxpage):
 
     page = 1
+    news_html = ""  # 뉴스 기사를 담을 HTML 문자열 초기화
 
     while page <= int(maxpage):
 
         url = 'https://finance.naver.com/item/news_news.nhn?code=' + str(company_code) + '&page=' + str(page)
         source_code = requests.get(url).text
         html = BeautifulSoup(source_code, "lxml")
-
-
 
         # 뉴스 제목
         titles = html.select('.title')
@@ -52,17 +48,15 @@ def crawler(company_code, maxpage):
         source_result = [source.get_text() for source in sources]
 
 
-        # 변수들 합쳐서 해당 디렉토리에 csv파일로 저장하기
-
-        result= {"날짜" : date_result, "언론사" : source_result, "기사제목" : title_result, "링크" : link_result}
-        df_result = pd.DataFrame(result)
-
-        print("다운 받고 있습니다------")
-        df_result.to_csv('page' + str(page) + '.csv', mode='w', encoding='utf-8-sig')
-
+        # HTML에 뉴스 기사 추가
+        for i in range(len(title_result)):
+            news_html += f'<p><a href="{link_result[i]}" target="_blank">{title_result[i]}</a> - {date_result[i]} - {source_result[i]}</p>'
 
         page += 1
 
+    # HTML 파일 생성
+    with open('news.html', 'w', encoding='utf-8') as f:
+        f.write(news_html)
 
 
 

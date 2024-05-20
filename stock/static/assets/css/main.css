@@ -4833,9 +4833,9 @@ input, select, textarea {
 				width: 100%;
 			}
 
-				#banner > article.full .content {
+				/* #banner > article.full .content {
 					width: 50rem;
-				}
+				} */
 
 				@media screen and (min-width: 1281px) and (max-width: 1680px) {
 

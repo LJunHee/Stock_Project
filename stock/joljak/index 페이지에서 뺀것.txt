@@ -1,0 +1,96 @@
+<index 페이지 뺀것>
+				<!-- Spotlight -->
+					<section class="main spotlight left invert accent1">
+						<div class="image filtered" data-position="center">
+							<img src="images/pic02.jpg" alt="" />
+						</div>
+						<div class="content">
+							<h2>Magna amet lorem</h2>
+							<p>Sed magna lorem ipsum etiam dolor et nullam consequat, et feugiat tempus consequat.</p>
+							<ul class="actions">
+								<li><a href="#one" class="button">더보기</a></li>
+							</ul>
+						</div>
+					</section>
+
+				<!-- Section -->
+					<section class="main special">
+						<h2>Etiam amet consequat</h2>
+						<p>Lorem ipsum dolor sit amet nullam consequat, feugiat nisl tempus<br />
+						adipiscing sed cursus. Ipsum tempus phasellus magna.</p>
+						<div class="slider-wrapper">
+							<div class="slider">
+								<article>
+									<a href="#" class="image filtered">
+										<img src="images/slide03.jpg" alt="" />
+									</a>
+									<div class="content">
+										<p>Aliquam feugiat magna consequat</p>
+									</div>
+								</article>
+								<article>
+									<a href="#" class="image filtered">
+										<img src="images/slide01.jpg" alt="" />
+									</a>
+									<div class="content">
+										<p>Dolor phaselllus et cursus nullam</p>
+									</div>
+								</article>
+								<article class="initial">
+									<a href="#" class="image filtered">
+										<img src="images/slide02.jpg" alt="" />
+									</a>
+									<div class="content">
+										<p>Ipsum dolor sit amet nullam feugiat</p>
+									</div>
+								</article>
+								<article>
+									<a href="#" class="image filtered">
+										<img src="images/slide03.jpg" alt="" />
+									</a>
+									<div class="content">
+										<p>Nisl lorem phasellus aliquam magna</p>
+									</div>
+								</article>
+								<article>
+									<a href="#" class="image filtered">
+										<img src="images/slide01.jpg" alt="" />
+									</a>
+									<div class="content">
+										<p>Adipiscing lorem nulla etiam dolor</p>
+									</div>
+								</article>
+							</div>
+						</div>
+					</section>
+
+				<!-- Section -->
+					<section class="main special invert accent3">
+						<h2>Nullam dolor veroeros</h2>
+						<p>Sit amet nullam consequat, feugiat nisl tempus adipiscing sed consequat cursus.</p>
+						<form method="post" action="#" class="combined">
+							<input type="email" name="email" value="" placeholder="Your email address" />
+							<button type="submit" class="primary">Sign Up</button>
+						</form>
+					</section>
+
+				<!-- Section -->
+					<section class="main special">
+						<h2>Get in touch</h2>
+						<p>Lorem ipsum dolor sit amet nullam consequat, feugiat nisl tempus.</p>
+						<ul class="contact-icons">
+							<li>
+								<span class="icon major alt fa-envelope"></span>
+								<p><a href="#">information@untitled.tld</a></p>
+							</li>
+							<li>
+								<span class="icon major alt fa-map"></span>
+								<p>1234 Somewhere Road<br />
+								Nashville, TN 00000</p>
+							</li>
+							<li>
+								<span class="icon solid major alt fa-mobile-alt"></span>
+								<p><a href="#">(000) 000-0000</a></p>
+							</li>
+						</ul>
+					</section>
