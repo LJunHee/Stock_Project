@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from bs4 import BeautifulSoup
-# import pandas as pd
-import requests
-import re
 import mysql.connector
+# from news import convert_to_code, crawler
 
 app = Flask(__name__)
 
@@ -23,7 +21,7 @@ table_names = [
     'lg생활건강_test_result', 'lg에너지솔루션_test_result', 'lg유플러스_test_result', 'lg이노텍_test_result', 'lg전자_test_result',
     'lg화학_test_result', 'naver_test_result', 'nh투자증권_test_result', 'posco홀딩스_test_result', 's-oil_test_result',
     'sk 바이오팜_test_result', 'sk_test_result', 'skc_test_result', 'sk바이오사이언스_test_result', 'sk스퀘어_test_result',
-    'sk아이이테크놀리지_test_result', 'sk이노베이션_test_result', 'sk텔레콤_test_result', 'sk하이닉스_test_result', '강원랜드_test_result',
+    'sk아이이테크놀로지_test_result', 'sk이노베이션_test_result', 'sk텔레콤_test_result', 'sk하이닉스_test_result', '강원랜드_test_result',
     '고려아연_test_result', '금양_test_result', '금호석유_test_result', '기아_test_result', '기업은행_test_result', '넷마블_test_result',
     '대한항공_test_result', '두산밥캣_test_result', '두산에너빌리티_test_result', '롯데지주_test_result', '롯데케미칼_test_result',
     '메리츠금융지주_test_result', '미래에셋증권_test_result', '삼성sdi_test_result', '삼성sds_test_result', '삼성물산_test_result',
@@ -43,13 +41,10 @@ table_names = [
 def search_query(query):
     cursor = db.cursor()
 
-    # 먼저 kospi 테이블에서 검색합니다.
     cursor.execute(f"SELECT * FROM kospi WHERE 종목명 LIKE %s OR 종목코드 LIKE %s", ('%' + query + '%', '%' + query + '%'))
     kospi_results = cursor.fetchall()
 
-    # 만약 kospi 테이블에서 검색 결과가 있다면
     if kospi_results:
-        # 검색한 테이블명을 확인하고 존재하면 결과 반환
         table_name = query + '_test_result'
         if table_name in table_names:
             cursor.execute(f"SELECT * FROM {table_name}")
@@ -58,71 +53,15 @@ def search_query(query):
         else:
             return None
     else:
-        # 검색 결과가 없으면 None 반환
         return None
 
-@app.route('/get_news', methods=['POST'])
-def get_news():
-    data = request.json
-    company = data['company']
-    maxpage = data['maxpage']
-
-    company_code = convert_to_code(company)
-    if not company_code:
-        return jsonify({"error": "Company not found"}), 404
-
-    news = crawler(company_code, maxpage)
-    return jsonify(news)
-
-def convert_to_code(company):
-    data = pd.read_csv('company_list.txt', dtype=str, sep='\t')
-    company_dict = dict(zip(data['회사명'], data['종목코드']))
-
-    pattern = '[a-zA-Z가-힣]+'
-    if re.match(pattern, company):
-        return company_dict.get(company)
-    else:
-        return company
-
-def crawler(company_code, maxpage):
-    page = 1
-    news_list = []
-
-    while page <= int(maxpage):
-        url = f'https://finance.naver.com/item/news_news.nhn?code={company_code}&page={page}'
-        source_code = requests.get(url).text
-        html = BeautifulSoup(source_code, "lxml")
-
-        titles = html.select('.title')
-        dates = html.select('.date')
-        sources = html.select('.info')
-
-        for i in range(len(titles)):
-            title = titles[i].get_text().strip()
-            link = 'https://finance.naver.com' + titles[i].find('a')['href']
-            date = dates[i].get_text().strip()
-            source = sources[i].get_text().strip()
-
-            news_list.append({
-                "title": title,
-                "link": link,
-                "date": date,
-                "source": source
-            })
-
-        page += 1
-
-    return news_list
-
-
-#자동 완성 검색 쿼리 함수 정의
+# 자동 완성 검색 쿼리 함수 정의
 def search_query_name(query):
     cursor = db.cursor()
     cursor.execute(f"SELECT * FROM kospi WHERE 종목명 LIKE %s OR 종목코드 LIKE %s", ('%' + query + '%', '%' + query + '%'))
     results = cursor.fetchall()
     return results
 
-# 자동완성 엔드포인트 정의
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     term = request.args.get('term')
@@ -131,7 +70,7 @@ def autocomplete():
         autocomplete_results = [{"label": item[1], "value": item[1]} for item in results]
         return jsonify(autocomplete_results)
     else:
-        return jsonify([])  # 검색어가 없을 경우 빈 리스트 반환
+        return jsonify([])
 
 @app.route('/search', methods=['GET'])
 def search():
@@ -141,7 +80,6 @@ def search():
         return render_template('search.html', data=results, query=query)
     else:
         return render_template('search.html', data=None, query=None)
-
 
 @app.route('/')
 def index():
@@ -167,9 +105,24 @@ def prediction_html():
 def news_html():
     return render_template('news.html')
 
+@app.route('/kakao.html')
+def kakao_html():
+    return render_template('kakao.html')
+
+@app.route('/samsung.html')
+def samsung_html():
+    return render_template('samsung.html')
 
 
-
+@app.route('/get_news', methods=['POST'])
+def get_news():
+    data = request.get_json()
+    company = data['company']
+    maxpage = data['maxpage']
+    print(f"Received company: {company}, maxpage: {maxpage}")
+    file_path = 'C:/Apache24/flask/app/stock/company_list.txt'  # 파일 경로 수정
+    news_html = convert_to_code(company, file_path, maxpage=int(maxpage))
+    return jsonify({'news_html': news_html})
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

@@ -1,48 +1,52 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Untitled</title>
+    <title>News Crawler</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}" />
     <style>
-        /* 검색어 자동완성 결과를 표시하는 요소의 스타일 */
         .ui-autocomplete {
             position: fixed;
-            z-index: 9999; /* 연관 검색어를 다른 요소 위에 배치하기 위한 z-index 값 */
+            z-index: 9999;
             background-color: white;
             border: 1px solid #ccc;
             padding-right: 30px;
-            max-width: 275px; /* 원하는 너비 값으로 조정 */
+            max-width: 275px;
             margin-left: 50%;
             list-style-type: none;
         }
 
         iframe {
-            height: 597px;
-            width: 1903px;
+            height: 600px;
+            width: 1920px;
             border: none;
         }
 
+        .datetime {
+            position: absolute;
+            top: 80%;
+            right: 20px;
+            font-size: 1.2rem;
+            color: #fff;
+        }
     </style>
 </head>
 <body class="is-preload">
-
     <!-- Header -->
-    <header id="header" style="z-index: 9990;">
-
+    <header id="header" style="z-index: 9990; padding-bottom: 0; padding-top: 20px; height: 15em;">
         <!-- Nav -->
-        <nav id="nav">
+        <nav id="nav" style="height: 0rem;">
             <ul>
                 <li class="current"><a href="index.html">홈으로</a></li>
-                <li><a href="prediction.html" onclick="showKeywordPrompt()">뉴스찾기</a></li>
+                <li><a href="#" onclick="showKeywordPrompt()">뉴스찾기</a></li>
             </ul>
+            <div class="datetime" id="current-datetime"></div>
         </nav>
-
         <!-- Logo -->
-        <a class="logo" href="index.html">주가 예측 <span>웹 프로그램</span></a>
+        <a class="logo" href="index.html" style="">주가 예측 <span>웹 프로그램</span></a>
         <form method="get" action="/search" class="combined" onsubmit="return validateForm()">
             <input type="text" name="query" id="query" placeholder="종목 검색" class="invert" />
             <input type="submit" class="special" value="검색" />
@@ -59,19 +63,7 @@
                 </div>
             </div>
         </article>
-        <article class="full">
-            <div class="image" data-position="center">
-                <img src="{{ url_for('static', filename='images/pic03.jpg')}}" alt="" />
-            </div>
-            <div class="content">
-                <h2 class="alt"><a href="#">Malesuada et amet tempus nisl adipiscing lorem</a></h2>
-                <ul class="actions">
-                    <li><a href="#" class="button">Learn More</a></li>
-                </ul>
-            </div>
-        </article>
     </section>
-
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
@@ -82,5 +74,189 @@
     <script src="{{ url_for('static', filename='assets/js/breakpoints.min.js')}}"></script>
     <script src="{{ url_for('static', filename='assets/js/util.js')}}"></script>
     <script src="{{ url_for('static', filename='assets/js/main.js')}}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        function validateForm() {
+            var query = document.getElementById('query').value;
+            if (query.trim() === '') {
+                alert('검색어를 입력하세요.');
+                return false;
+            }
+            return true;
+        }
+
+        $(document).ready(function() {
+            $(".combined").find("input[name='query']").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "/autocomplete",
+                        dataType: "json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+
+            function updateDateTime() {
+                    var now = new Date();
+                    var options = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' };
+                    var dateString = now.toLocaleDateString('ko-KR', options);
+                    var timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+                    var timeString = now.toLocaleTimeString('ko-KR', timeOptions);
+                    document.getElementById('current-datetime').innerHTML = dateString + " " + timeString;
+            }
+
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+            });
+
+        function showKeywordPrompt() {
+            var kospi100 = {
+                "삼성바이오로직스": "207940",
+                "삼성SDI": "006400",
+                "고려아연": "010130",
+                "LG화학": "051910",
+                "POSCO홀딩스": "005490",
+                "LG에너지솔루션": "373220",
+                "LG생활건강": "051900",
+                "한미약품": "128940",
+                "삼성화재": "000810",
+                "포스코퓨처엠": "003670",
+                "CJ제일제당": "097950",
+                "현대모비스": "012330",
+                "크래프톤": "259960",
+                "현대차": "005380",
+                "하이브": "352820",
+                "한화에어로스페이스": "012450",
+                "엔씨소프트": "036570",
+                "LG이노텍": "011070",
+                "셀트리온": "068270",
+                "NAVER": "035420",
+                "SK하이닉스": "000660",
+                "SK": "034730",
+                "현대글로비스": "086280",
+                "삼성SDS": "018260",
+                "삼성물산": "028260",
+                "삼성전기": "009150",
+                "금호석유": "011780",
+                "에코프로머티리얼즈": "450080",
+                "아모레퍼시픽": "090430",
+                "롯데케미칼": "011170",
+                "HD한국조선해양": "009540",
+                "HD현대중공업": "329180",
+                "BGF리테일": "282330",
+                "SK이노베이션": "096770",
+                "금양": "001570",
+                "SKC": "011790",
+                "기아": "000270",
+                "LG전자": "066570",
+                "DB손해보험": "005830",
+                "KT&G": "033780",
+                "삼성생명": "032830",
+                "SK 바이오팜": "326030",
+                "오리온": "271560",
+                "LG": "003550",
+                "삼성전자": "005930",
+                "메리츠금융지주": "138040",
+                "SK스퀘어": "402340",
+                "S-oil": "010950",
+                "유한양행": "000100",
+                "SK아이이테크놀로지": "361610",
+                "HD현대": "267250",
+                "F&F": "383220",
+                "KB금융": "105560",
+                "이마트": "139480",
+                "한국금융지주": "071050",
+                "넷마블": "251270",
+                "SK바이오사이언스": "302440",
+                "호텔신라": "008770",
+                "한진칼": "180640",
+                "하나금융지주": "086790",
+                "코웨이": "021240",
+                "한국타이어앤테크놀로지": "161390",
+                "카카오": "035720",
+                "두산밥캣": "241560",
+                "포스코인터내셔널": "047050",
+                "SK텔레콤": "017670",
+                "한국항공우주": "047810",
+                "포스코DX": "022100",
+                "GS": "078930",
+                "신한지주": "055550",
+                "삼성증권": "016360",
+                "카카오페이": "377300",
+                "한미사이언스": "008930",
+                "삼성카드": "029780",
+                "KT": "030200",
+                "현대건설": "000720",
+                "현대제철": "004020",
+                "한화솔루션": "009830",
+                "한화오션": "042660",
+                "카카오뱅크": "323410",
+                "롯데지주": "004990",
+                "한국가스공사": "036460",
+                "아모레G": "002790",
+                "삼성엔지니어링": "028050",
+                "한국전력": "015760",
+                "대한항공": "003490",
+                "GS리테일": "007070",
+                "제일기획": "030000",
+                "두산에너빌리티": "034020",
+                "강원랜드": "035250",
+                "HMM": "011200",
+                "우리금융지주": "316140",
+                "기업은행": "024110",
+                "NH투자증권": "005940",
+                "LG디스플레이": "034220",
+                "LG유플러스": "032640",
+                "삼성중공업": "010140",
+                "미래에셋증권": "006800",
+                "쌍용C&E": "003410",
+                "한온시스템": "018880"
+            };
+
+            var keyword = prompt("종목 이름이나 코드를 입력하세요:");
+
+            if (!(keyword in kospi100) && !Object.values(kospi100).includes(keyword)) {
+                alert("KOSPI 100 종목명 또는 종목코드만 입력 가능합니다.");
+                return;
+            }
+
+            if (keyword === "카카오") {
+                document.querySelector('iframe').src = "kakao.html";
+                return;
+            }
+            if (keyword === "삼성전자") {
+                document.querySelector('iframe').src = "samsung.html";
+                return;
+            }
+
+
+            // Flask 애플리케이션으로 POST 요청 보내기
+            fetch('/get_news', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ company: keyword, maxpage: maxPages }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 서버로부터 받은 데이터(data)를 활용하여 원하는 동작 수행
+                console.log(data);
+                // 데이터 렌더링
+                var newsResults = document.getElementById('news-results');
+                newsResults.innerHTML = data.news_html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>

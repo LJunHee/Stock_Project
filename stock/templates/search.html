@@ -18,30 +18,36 @@
 			}
 
 			iframe {
+				margin-top: 3%;
 				margin-left:10%;
 				width:1600px;
 				height:700px; /* 변경된 높이 */
 		}
-
+		.datetime {
+			position: absolute;
+			top: 80%;
+			right: 20px;
+			font-size: 1.2rem;
+			color: #fff;
+	}
 
 		</style>
 	</head>
 	<body class="is-preload">
 
 		<!-- Header -->
-		<header id="header" class="alt">
+		<header id="header" class="alt" style="padding-bottom: 0; padding-top: 20px; height: 15em;">
 
 			<!-- Nav -->
-			<nav id="nav">
+			<nav id="nav" style="height: 1rem;">
 				<ul>
-					<li><a href="index.html">홈으로</a></li>
-					<li><a href="generic.html">주요뉴스</a></li>
+					<li class="current"><a href="index.html">홈으로</a></li>
 				</ul>
+				<div class="datetime" id="current-datetime"></div>
 			</nav>
 
 			<!-- Logo -->
-			<a class="logo" href="index.html"></a>
-			<h1>{{query}} 검색 결과</h1>
+			<h1 style="margin-bottom:4rem;">{{query}} 검색 결과</h1>
 		</header>
 
 		<!-- Main -->
@@ -74,7 +80,6 @@
 				</div>
 			</div>
 		</div>
-
 		<!-- Scripts -->
 		<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
 		<script src="{{ url_for('static', filename='assets/js/browser.min.js')}}"></script>
@@ -83,6 +88,20 @@
 		<script src="{{ url_for('static', filename='assets/js/util.js')}}"></script>
 		<script src="{{ url_for('static', filename='assets/js/main.js')}}"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+			$(document).ready(function() {
+				function updateDateTime() {
+						var now = new Date();
+						var options = { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' };
+						var dateString = now.toLocaleDateString('ko-KR', options);
+						var timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+						var timeString = now.toLocaleTimeString('ko-KR', timeOptions);
+						document.getElementById('current-datetime').innerHTML = dateString + " " + timeString;
+				}
 
+				setInterval(updateDateTime, 1000);
+				updateDateTime();
+		});
+			</script>
 	</body>
 </html>

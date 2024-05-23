@@ -1,23 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock News Crawler</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css')}}" />
 </head>
 <body>
-    <h1>실시간 뉴스기사 다운받기</h1>
-    <form id="newsForm">
-        <label for="company">종목 이름이나 코드 입력: </label>
-        <input type="text" id="company" name="company" required>
-        <br>
-        <label for="maxpage">최대 뉴스 페이지 수 입력: </label>
-        <input type="number" id="maxpage" name="maxpage" required>
-        <br>
-        <button type="submit">뉴스 가져오기</button>
-    </form>
-    <div id="newsContainer" style="border : solid; height:300px;"></div>
+    <h1 style="text-align:center; margin-top:2rem;">오늘의 헤드라인</h1>
+    <div class="table-wrapper">
+        <table class="alt" style="margin-left: 2.5rem; width:95%;">
+            <thead>
+                <tr>
+                    <th>기사 제목</th>
+                    <th>기사 날짜</th>
+                    <th>언론사</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://n.news.naver.com/mnews/article/008/0005041487" target="_blank">SK하이닉스, 사상 첫 20만원 돌파…'천비디아' 훈풍</a></td>
+                    <td>2024.05.23 09:20</td>
+                    <td>머니투데이</td>
+                </tr>
+                <tr>
+                    <td><a href="https://n.news.naver.com/mnews/article/055/0001157435" target="_blank">금통위 "물가 상방 압력 증대…영향 크지는 않을 듯"</a></td>
+                    <td>2024.05.23 11:11</td>
+                    <td>SBS뉴스</td>
+                </tr>
+                <tr>
+                    <td><a href="https://n.news.naver.com/mnews/article/001/0014703067" target="_blank">코스피, 엔비디아 훈풍에도 약보합…SK하이닉스 '20만닉스' 등극(종합)</a></td>
+                    <td>2024.05.23 09:49</td>
+                    <td>연합뉴스</td>
+                </tr>
+                <tr>
+                    <td><a href="https://n.news.naver.com/mnews/article/214/0001350325" target="_blank">미 엔비디아 "차세대 산업혁명 시작"‥시간외주가 1천 달러 돌파</a></td>
+                    <td>2024.05.23 09:21</td>
+                    <td>MBC뉴스</td>
+                </tr>
+                <tr>
+                    <td><a href="https://n.news.naver.com/mnews/article/421/0007555947" target="_blank">"이제는 비트코인보다 이더리움"…코인업계 대세 뒤바뀌었다</a></td>
+                    <td>2024.05.22 18:14</td>
+                    <td>뉴스1</td>
+                </tr>
+                <tr>
+                    <td><a href="https://n.news.naver.com/mnews/article/003/0012562287" target="_blank">금융당국, PF 연착륙 잰걸음…7월초까지 사업성 평가 완료</a></td>
+                    <td>2024.05.23 10:39</td>
+                    <td>NEWSIS</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <script src="{{ url_for('static', filename='')}}"></script>
+    	<!-- Scripts -->
+		<script src="{{ url_for('static', filename='assets/js/jquery.min.js')}}"></script>
+		<script src="{{ url_for('static', filename='assets/js/browser.min.js')}}"></script>
+		<script src="{{ url_for('static', filename='assets/js/jquery.dropotron.min.js')}}"></script>
+		<script src="{{ url_for('static', filename='assets/js/breakpoints.min.js')}}"></script>
+		<script src="{{ url_for('static', filename='assets/js/util.js')}}"></script>
+		<script src="{{ url_for('static', filename='assets/js/main.js')}}"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 </body>
 </html>

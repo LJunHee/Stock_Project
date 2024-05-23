@@ -1,8 +1,0 @@
-mod_wsgi.cp38-win_amd64.pyd
-C:\Users\JUNI\AppData\Local\Programs\Python\Python38
-C:\Users\JUNI\AppData\Local\Programs\Python\Python38\Scripts
-
-<ul class="actions stacked">
-							<li><a href="#" class="button primary fit">Sign Up</a></li>
-							<li><a href="#" class="button fit">Log In</a></li>
-						</ul>

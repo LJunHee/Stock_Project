@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 # MySQL 연결 정보 설정
 user = 'root'
@@ -10,7 +10,7 @@ database = 'kospistocks'
 port = '3306'
 
 # MySQL 연결 엔진 생성
-engine = create_engine(f'mysql+mysqldb://{user}:{password}@{host}:{port}/{database}')
+engine = create_engine(f'mysql+mysqldb://{user}:{password}@{host}:{port}/{database}?charset=utf8')
 
 # CSV 파일이 있는 폴더 경로 설정
 folder_path = r'C:\Apache24\flask\app\stock\data\A_lstm'
@@ -25,6 +25,17 @@ for file in os.listdir(folder_path):
 
         # 데이터베이스에 데이터 쓰기
         table_name = file.replace('.csv', '')  # 파일 이름에서 확장자 제거
+
+        # 테이블 존재 여부 확인 쿼리
+        with engine.connect() as connection:
+            result = connection.execute(text(f"SHOW TABLES LIKE '{table_name}';"))
+            table_exists = result.fetchone()
+
+        if table_exists:
+            print(f'{table_name} 테이블이 이미 존재합니다. 삭제 후 다시 생성합니다.')
+            with engine.connect() as connection:
+                connection.execute(text(f"DROP TABLE IF EXISTS `{table_name}`;"))
+
         df.to_sql(name=table_name, con=engine, index=False, if_exists='replace')
 
         print(f'{file}이(가) MySQL에 성공적으로 업로드되었습니다.')
