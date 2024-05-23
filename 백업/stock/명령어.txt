@@ -1,0 +1,52 @@
+def search_query(query):
+    cursor = db.cursor()
+   
+    # 먼저 kospi 테이블에서 검색합니다.
+    cursor.execute(f"SELECT * FROM kospi WHERE 종목명 LIKE %s OR 종목코드 LIKE %s", ('%' + query + '%', '%' + query + '%'))
+    kospi_results = cursor.fetchall()
+    
+    # 만약 kospi 테이블에서 검색 결과가 있다면
+    if kospi_results:
+        # 검색한 테이블명을 확인하고 존재하면 결과 반환
+        table_name = query + '_test_result'
+        if table_name in table_names:
+            cursor.execute(f"SELECT * FROM {table_name}")
+            test_result_results = cursor.fetchall()
+            return test_result_results
+        else:
+            return None
+    else:
+        # 검색 결과가 없으면 None 반환
+        return None
+
+
+
+# 검색 쿼리 함수 정의
+def search_query(query):
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM kospi WHERE 종목명 LIKE %s OR 종목코드 LIKE %s", ('%' + query + '%', '%' + query + '%'))
+    results = cursor.fetchall()
+    return results
+
+# 자동완성 엔드포인트 정의
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    term = request.args.get('term')
+    if term:
+        results = search_query(term)
+        autocomplete_results = [{"label": item[1], "value": item[2]} for item in results]
+        return jsonify(autocomplete_results)
+    else:
+        return jsonify([])  # 검색어가 없을 경우 빈 리스트 반환
+
+
+import json
+import mpld3
+
+# mpld3_html = mpld3.fig_to_html(fig)
+
+# file_path = r"C:\Apache24\flask\app\stock\templates\mpld3_graph.html"
+# with open(file_path, "w") as f:
+#     f.write(mpld3_html)
+
+# print(f"그래프가 {file_path}에 저장되었습니다.")
